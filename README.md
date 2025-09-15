@@ -1,4 +1,4 @@
-# Xocialive Chat - AI Policy Assistant
+# AI Policy Assistant
 
 A modern, multilingual AI-powered chatbot for company policy assistance, built with Flask and integrated with a RAG (Retrieval Augmented Generation) system via n8n workflow automation.
 
@@ -81,7 +81,7 @@ Based on the n8n workflow diagram, the system integrates with:
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd xocialive_chat
+   cd HR-Assistant-Agent
    ```
 
 2. **Install dependencies**
@@ -106,7 +106,7 @@ Based on the n8n workflow diagram, the system integrates with:
 ## 📁 Project Structure
 
 ```
-xocialive_chat/
+HR-Assistant-Agent/
 ├── app.py                 # Flask application and API endpoints
 ├── requirements.txt       # Python dependencies
 ├── README.md             # Project documentation
