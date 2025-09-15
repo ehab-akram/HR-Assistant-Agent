@@ -106,7 +106,7 @@ Based on the n8n workflow diagram, the system integrates with:
 ## 📁 Project Structure
 
 ```
-xocialive_chat/
+HR-Assistant-Agent/
 ├── app.py                 # Flask application and API endpoints
 ├── requirements.txt       # Python dependencies
 ├── README.md             # Project documentation
