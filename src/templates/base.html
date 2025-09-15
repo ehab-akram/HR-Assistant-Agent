@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-ar="المساعد الذكي للسياسات" data-en="AI Policy Assistant">المساعد الذكي للسياسات</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #ffffff;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 300px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      transition: all 0.3s ease-in-out;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .sidebar h2 {
+      margin-bottom: 2rem;
+      font-size: 1.5rem;
+      text-align: center;
+      color: white;
+      font-weight: 700;
+    }
+    .sidebar h2 i {
+      margin-left: 0.5rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      flex: 1;
+    }
+    .sidebar li {
+      margin-bottom: 0.75rem;
+    }
+    .sidebar a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1rem;
+      padding: 0.875rem 1.25rem;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      border: 1px solid transparent;
+    }
+    .sidebar a:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      transform: translateX(4px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .sidebar a.active {
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    .sidebar a i {
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Sidebar toggle (mobile) */
+    .sidebar-toggle {
+      display: none;
+      background: #2563eb;
+      color: white;
+      border: none;
+      font-size: 1.5rem;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      border-radius: 0 0 8px 0;
+      transition: all 0.3s ease;
+    }
+    .sidebar-toggle:hover {
+      background: #1d4ed8;
+    }
+
+    /* Main content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    section {
+      flex: 1;
+      display: none;
+      padding: 0;
+      overflow-y: auto;
+    }
+    section.active {
+      display: block;
+    }
+
+    /* Dark Theme */
+    [data-theme="dark"] {
+      background: #0f172a;
+      color: #f1f5f9;
+    }
+
+    [data-theme="dark"] body {
+      background: #0f172a;
+    }
+
+    [data-theme="dark"] section {
+      color: #f1f5f9;
+    }
+
+    /* Dark Theme Sidebar */
+    [data-theme="dark"] .sidebar {
+      background: linear-gradient(135deg, #1e293b, #334155);
+      border-right-color: rgba(255, 255, 255, 0.05);
+      box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="dark"] .sidebar h2 {
+      color: #f1f5f9;
+    }
+
+    [data-theme="dark"] .sidebar h2 i {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    [data-theme="dark"] .sidebar a {
+      color: rgba(241, 245, 249, 0.8);
+    }
+
+    [data-theme="dark"] .sidebar a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #f1f5f9;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    [data-theme="dark"] .sidebar a.active {
+      background: rgba(59, 130, 246, 0.3);
+      color: #f1f5f9;
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    }
+
+    [data-theme="dark"] .sidebar-toggle {
+      background: #1e293b;
+      color: #f1f5f9;
+    }
+
+    [data-theme="dark"] .sidebar-toggle:hover {
+      background: #334155;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        transform: translateX(100%);
+        z-index: 1000;
+        width: 280px;
+        padding: 1rem;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .sidebar h2 {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+      }
+      .sidebar a {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+      }
+      .sidebar-toggle {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1001;
+      }
+      [data-theme="dark"] .sidebar {
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.5);
+      }
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <h2><i class="fas fa-robot"></i> <span data-ar="مساعد الموارد البشرية" data-en="HR Assistant">مساعد الموارد البشرية</span></h2>
+    <ul>
+      <li><a href="{{ url_for('home') }}" class="{% if request.endpoint == 'home' %}active{% endif %}"><i class="fas fa-home"></i> <span data-ar="الصفحة الرئيسية" data-en="Home">الصفحة الرئيسية</span></a></li>
+      <li><a href="{{ url_for('chat') }}" class="{% if request.endpoint == 'chat' %}active{% endif %}"><i class="fas fa-comments"></i> <span data-ar="المحادثة" data-en="Chat">المحادثة</span></a></li>
+      <li><a href="{{ url_for('settings') }}" class="{% if request.endpoint == 'settings' %}active{% endif %}"><i class="fas fa-cog"></i> <span data-ar="الإعدادات" data-en="Settings">الإعدادات</span></a></li>
+    </ul>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    
+    {% block content %}{% endblock %}
+  </main>
+
+  <script>
+    // Global variables
+    let sessionId = null;
+    let isLoading = false;
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+      generateSessionId();
+      loadSettings();
+    });
+
+    // Generate session ID
+    async function generateSessionId() {
+      try {
+        const response = await fetch('/generate_session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await response.json();
+        if (data.success) {
+          sessionId = data.sessionId;
+        }
+      } catch (error) {
+        console.error('Error generating session ID:', error);
+      }
+    }
+
+    // Toggle sidebar on mobile
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("open");
+    }
+
+    // Theme switching
+    function switchTheme() {
+      const theme = document.getElementById('theme-select')?.value;
+      if (theme) {
+        if (theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+        localStorage.setItem('theme', theme);
+      }
+    }
+
+    // New theme selection function
+    function selectTheme(theme) {
+      // Remove active class from all theme options
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+      });
+      
+      // Add active class to selected theme
+      const selectedOption = document.querySelector(`[data-theme="${theme}"]`);
+      if (selectedOption) {
+        selectedOption.classList.add('active');
+      }
+      
+      // Apply theme
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
+      
+      // Save theme preference
+      localStorage.setItem('theme', theme);
+    }
+
+    // New language selection function
+    function selectLanguage(lang) {
+      // Remove active class from all language options
+      document.querySelectorAll('.language-option').forEach(option => {
+        option.classList.remove('active');
+      });
+      
+      // Add active class to selected language
+      const selectedOption = document.querySelector(`[data-lang="${lang}"]`);
+      if (selectedOption) {
+        selectedOption.classList.add('active');
+      }
+      
+      // Apply language
+      const isArabic = lang === 'ar';
+      document.documentElement.lang = lang;
+      document.documentElement.dir = isArabic ? 'rtl' : 'ltr';
+      document.documentElement.setAttribute('data-lang', lang);
+
+      // Update all elements with data attributes
+      document.querySelectorAll('[data-ar][data-en]').forEach(element => {
+        const text = isArabic ? element.getAttribute('data-ar') : element.getAttribute('data-en');
+        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+          element.placeholder = text;
+        } else {
+          element.textContent = text;
+        }
+      });
+
+      // Update title
+      const title = document.querySelector('title');
+      title.textContent = isArabic ? title.getAttribute('data-ar') : title.getAttribute('data-en');
+
+      // Update placeholder for chat input
+      const chatInput = document.getElementById('user-input');
+      if (chatInput) {
+        chatInput.placeholder = isArabic ?
+          chatInput.getAttribute('data-placeholder-ar') :
+          chatInput.getAttribute('data-placeholder-en');
+      }
+
+      // Save language preference
+      localStorage.setItem('language', lang);
+    }
+
+    // Language switching
+    function switchLanguage() {
+      const lang = document.getElementById('lang-select')?.value;
+      if (lang) {
+        const isArabic = lang === 'ar';
+
+        // Update HTML lang and dir attributes
+        document.documentElement.lang = lang;
+        document.documentElement.dir = isArabic ? 'rtl' : 'ltr';
+        document.documentElement.setAttribute('data-lang', lang);
+
+        // Update all elements with data attributes
+        document.querySelectorAll('[data-ar][data-en]').forEach(element => {
+          const text = isArabic ? element.getAttribute('data-ar') : element.getAttribute('data-en');
+          if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+            element.placeholder = text;
+          } else {
+            element.textContent = text;
+          }
+        });
+
+        // Update title
+        const title = document.querySelector('title');
+        title.textContent = isArabic ? title.getAttribute('data-ar') : title.getAttribute('data-en');
+
+        // Update placeholder for chat input
+        const chatInput = document.getElementById('user-input');
+        if (chatInput) {
+          chatInput.placeholder = isArabic ?
+            chatInput.getAttribute('data-placeholder-ar') :
+            chatInput.getAttribute('data-placeholder-en');
+        }
+
+        // Save language preference
+        localStorage.setItem('language', lang);
+      }
+    }
+
+    // Load saved settings
+    function loadSettings() {
+      // Load theme
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        // Update old select if it exists
+        const oldSelect = document.getElementById('theme-select');
+        if (oldSelect) {
+          oldSelect.value = savedTheme;
+        }
+        selectTheme(savedTheme);
+      } else {
+        selectTheme('light'); // Default to light theme
+      }
+
+      // Load language
+      const savedLang = localStorage.getItem('language');
+      if (savedLang) {
+        // Update old select if it exists
+        const oldSelect = document.getElementById('lang-select');
+        if (oldSelect) {
+          oldSelect.value = savedLang;
+        }
+        selectLanguage(savedLang);
+      } else {
+        selectLanguage('ar'); // Default to Arabic
+      }
+    }
+
+    // Utility function to escape HTML
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

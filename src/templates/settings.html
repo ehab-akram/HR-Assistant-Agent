@@ -1,0 +1,540 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+  /* Settings */
+  .settings-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .settings-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .settings-header h1 {
+    font-size: 2.5rem;
+    color: #1e293b;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .settings-header h1 i {
+    color: #2563eb;
+    margin-left: 0.5rem;
+  }
+
+  .settings-subtitle {
+    font-size: 1.2rem;
+    color: #64748b;
+    margin: 0;
+  }
+
+  .settings-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .setting-card {
+    padding: 1.5rem 0;
+    transition: all 0.3s ease;
+  }
+
+  .setting-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .setting-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .setting-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+  }
+
+  .setting-info h3 {
+    font-size: 1.3rem;
+    color: #1e293b;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+  }
+
+  .setting-info p {
+    color: #64748b;
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .setting-control {
+    margin-top: 1rem;
+  }
+
+  /* Theme Options */
+  .theme-options {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .theme-option {
+    flex: 1;
+    text-align: center;
+    cursor: pointer;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+  .theme-option:hover {
+    border-color: #2563eb;
+    background: rgba(37, 99, 235, 0.05);
+  }
+
+  .theme-option.active {
+    border-color: #2563eb;
+    background: rgba(37, 99, 235, 0.1);
+  }
+
+  .theme-preview {
+    width: 100%;
+    height: 60px;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+  }
+
+  .theme-preview.light-theme {
+    background: #f8fafc;
+  }
+
+  .theme-preview.dark-theme {
+    background: #1e293b;
+  }
+
+  .preview-header {
+    height: 20px;
+    background: #2563eb;
+  }
+
+  .preview-content {
+    height: 40px;
+    background: #e2e8f0;
+  }
+
+  .theme-preview.dark-theme .preview-content {
+    background: #334155;
+  }
+
+  .theme-option span {
+    font-weight: 500;
+    color: #1e293b;
+  }
+
+  /* Language Options */
+  .language-options {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .language-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .language-option:hover {
+    border-color: #2563eb;
+    background: rgba(37, 99, 235, 0.05);
+  }
+
+  .language-option.active {
+    border-color: #2563eb;
+    background: rgba(37, 99, 235, 0.1);
+  }
+
+  .flag-icon {
+    font-size: 1.5rem;
+  }
+
+  .language-option span {
+    font-weight: 500;
+    color: #1e293b;
+  }
+
+  /* App Info */
+  .app-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .info-item:last-child {
+    border-bottom: none;
+  }
+
+  .info-label {
+    font-weight: 500;
+    color: #64748b;
+  }
+
+  .info-value {
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  /* Dark Theme */
+  [data-theme="dark"] .settings-header h1 {
+    color: #f1f5f9;
+  }
+
+  [data-theme="dark"] .settings-subtitle {
+    color: #cbd5e1;
+  }
+
+
+  [data-theme="dark"] .setting-info h3 {
+    color: #f1f5f9;
+  }
+
+  [data-theme="dark"] .setting-info p {
+    color: #cbd5e1;
+  }
+
+  [data-theme="dark"] .theme-option:hover {
+    border-color: #2563eb;
+    background: rgba(37, 99, 235, 0.1);
+  }
+
+  [data-theme="dark"] .theme-option.active {
+    border-color: #2563eb;
+    background: rgba(37, 99, 235, 0.2);
+  }
+
+  [data-theme="dark"] .theme-option span {
+    color: #f1f5f9;
+  }
+
+  [data-theme="dark"] .language-option:hover {
+    border-color: #2563eb;
+    background: rgba(37, 99, 235, 0.1);
+  }
+
+  [data-theme="dark"] .language-option.active {
+    border-color: #2563eb;
+    background: rgba(37, 99, 235, 0.2);
+  }
+
+  [data-theme="dark"] .language-option span {
+    color: #f1f5f9;
+  }
+
+  [data-theme="dark"] .info-item {
+    border-color: #475569;
+  }
+
+  [data-theme="dark"] .info-label {
+    color: #cbd5e1;
+  }
+
+  [data-theme="dark"] .info-value {
+    color: #f1f5f9;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .settings-container {
+      padding: 1rem;
+    }
+
+    .settings-header h1 {
+      font-size: 2rem;
+    }
+
+    .theme-options,
+    .language-options {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .setting-card {
+      padding: 1rem 0;
+    }
+
+    .setting-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 0.75rem;
+    }
+  }
+
+  /* Footer Styles */
+  .app-footer {
+    width: 100%;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    color: #1e293b;
+    margin-top: 4rem;
+    padding: 2rem 0 1rem;
+    border-top: 3px solid #2563eb;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .footer-content {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .footer-section h4 {
+    color: #2563eb;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .footer-section p {
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-section ul li {
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-section ul li a {
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .footer-section ul li a:hover {
+    color: #2563eb;
+  }
+
+  .footer-bottom {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .footer-bottom p {
+    color: #94a3b8;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  /* Dark theme footer adjustments */
+  [data-theme="dark"] .app-footer {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #f1f5f9;
+    border-top-color: #3b82f6;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  [data-theme="dark"] .footer-section h4 {
+    color: #3b82f6;
+  }
+
+  [data-theme="dark"] .footer-section p {
+    color: #cbd5e1;
+  }
+
+  [data-theme="dark"] .footer-section ul li a {
+    color: #cbd5e1;
+  }
+
+  [data-theme="dark"] .footer-section ul li a:hover {
+    color: #3b82f6;
+  }
+
+  [data-theme="dark"] .footer-bottom {
+    border-top-color: #475569;
+  }
+
+  [data-theme="dark"] .footer-bottom p {
+    color: #94a3b8;
+  }
+
+  /* Responsive footer */
+  @media (max-width: 768px) {
+    .footer-content {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      padding: 0 1rem;
+    }
+
+    .app-footer {
+      margin-top: 2rem;
+      padding: 1.5rem 0 1rem;
+    }
+
+    .footer-bottom {
+      padding: 0 1rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section id="settings-section" class="active">
+  <div class="settings-container">
+    <div class="settings-header">
+      <h1><i class="fas fa-cog"></i> <span data-ar="الإعدادات" data-en="Settings">الإعدادات</span></h1>
+      <p class="settings-subtitle" data-ar="قم بتخصيص تجربتك مع المساعد الذكي" data-en="Customize your AI assistant experience">قم بتخصيص تجربتك مع المساعد الذكي</p>
+    </div>
+
+    <div class="settings-cards">
+      <div class="setting-card">
+        <div class="setting-header">
+          <div class="setting-icon">
+            <i class="fas fa-palette"></i>
+          </div>
+          <div class="setting-info">
+            <h3 data-ar="المظهر" data-en="Appearance">المظهر</h3>
+            <p data-ar="اختر الثيم المناسب لك" data-en="Choose your preferred theme">اختر الثيم المناسب لك</p>
+          </div>
+        </div>
+        <div class="setting-control">
+          <div class="theme-options">
+            <div class="theme-option" data-theme="light" onclick="selectTheme('light')">
+              <div class="theme-preview light-theme">
+                <div class="preview-header"></div>
+                <div class="preview-content"></div>
+              </div>
+              <span data-ar="فاتح" data-en="Light">فاتح</span>
+            </div>
+            <div class="theme-option" data-theme="dark" onclick="selectTheme('dark')">
+              <div class="theme-preview dark-theme">
+                <div class="preview-header"></div>
+                <div class="preview-content"></div>
+              </div>
+              <span data-ar="داكن" data-en="Dark">داكن</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-card">
+        <div class="setting-header">
+          <div class="setting-icon">
+            <i class="fas fa-language"></i>
+          </div>
+          <div class="setting-info">
+            <h3 data-ar="اللغة" data-en="Language">اللغة</h3>
+            <p data-ar="اختر لغة الواجهة" data-en="Choose interface language">اختر لغة الواجهة</p>
+          </div>
+        </div>
+        <div class="setting-control">
+          <div class="language-options">
+            <div class="language-option" data-lang="ar" onclick="selectLanguage('ar')">
+              <div class="flag-icon">🇸🇦</div>
+              <span>العربية</span>
+            </div>
+            <div class="language-option" data-lang="en" onclick="selectLanguage('en')">
+              <div class="flag-icon">🇺🇸</div>
+              <span>English</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-card">
+        <div class="setting-header">
+          <div class="setting-icon">
+            <i class="fas fa-info-circle"></i>
+          </div>
+          <div class="setting-info">
+            <h3 data-ar="حول التطبيق" data-en="About App">حول التطبيق</h3>
+            <p data-ar="معلومات حول المساعد الذكي" data-en="Information about the AI assistant">معلومات حول المساعد الذكي</p>
+          </div>
+        </div>
+        <div class="setting-control">
+          <div class="app-info">
+            <div class="info-item">
+              <span class="info-label" data-ar="الإصدار:" data-en="Version:">الإصدار:</span>
+              <span class="info-value">1.0.0</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label" data-ar="التحديث الأخير:" data-en="Last Update:">التحديث الأخير:</span>
+              <span class="info-value">سبتمبر 2025</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4 data-ar="المساعد الذكي" data-en="AI Assistant">المساعد الذكي</h4>
+        <p data-ar="مساعدك الذكي لفهم سياسات الشركة والإجابة على استفساراتك" data-en="Your intelligent assistant for understanding company policies and answering your questions">
+          مساعدك الذكي لفهم سياسات الشركة والإجابة على استفساراتك
+        </p>
+      </div>
+      <div class="footer-section">
+        <h4 data-ar="روابط سريعة" data-en="Quick Links">روابط سريعة</h4>
+        <ul>
+          <li><a href="{{ url_for('home') }}" data-ar="الصفحة الرئيسية" data-en="Home">الصفحة الرئيسية</a></li>
+          <li><a href="{{ url_for('chat') }}" data-ar="المحادثة" data-en="Chat">المحادثة</a></li>
+          <li><a href="{{ url_for('settings') }}" data-ar="الإعدادات" data-en="Settings">الإعدادات</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4 data-ar="معلومات" data-en="Information">معلومات</h4>
+        <ul>
+          <li data-ar="الإصدار: 1.0.0" data-en="Version: 1.0.0">الإصدار: 1.0.0</li>
+          <li data-ar="© 2025 جميع الحقوق محفوظة" data-en="© 2025 All Rights Reserved">© 2025 جميع الحقوق محفوظة</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p data-ar="صُنع بـ ❤️ للموظفين" data-en="Made with ❤️ for employees">صُنع بـ ❤️ للموظفين</p>
+    </div>
+  </footer>
+</section>
+{% endblock %}

@@ -1,0 +1,730 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+  /* Chat */
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .chat-header {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .chat-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .chat-header h2 i {
+    font-size: 1.1rem;
+  }
+
+  .chat-controls {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .reset-chat-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .reset-chat-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+  }
+  .chat-box {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    background: #f8fafc;
+    scroll-behavior: smooth;
+  }
+
+  /* Suggestion Questions */
+  .suggestion-questions {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+  }
+
+  .suggestion-questions h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    color: #374151;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .suggestion-questions h3 i {
+    color: #2563eb;
+    font-size: 0.9rem;
+  }
+
+  .suggestion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .suggestion-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.875rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    color: #374151;
+    text-align: right;
+    line-height: 1.4;
+  }
+
+  .suggestion-item:hover {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  }
+
+  .suggestion-item i {
+    margin-left: 0.5rem;
+    opacity: 0.7;
+  }
+
+  .message-container {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+    animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .message-container.user {
+    justify-content: flex-end;
+  }
+
+  .message-container.bot {
+    justify-content: flex-start;
+  }
+
+  .message {
+    max-width: 75%;
+    padding: 1rem 1.25rem;
+    border-radius: 18px;
+    margin: 0 0.75rem;
+    word-wrap: break-word;
+    line-height: 1.6;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .message .formatted-content {
+    white-space: pre-wrap;
+  }
+
+  .message .formatted-content h1,
+  .message .formatted-content h2,
+  .message .formatted-content h3,
+  .message .formatted-content h4 {
+    margin: 1rem 0 0.5rem 0;
+    font-weight: 600;
+    color: inherit;
+  }
+
+  .message .formatted-content h1 { font-size: 1.25rem; }
+  .message .formatted-content h2 { font-size: 1.15rem; }
+  .message .formatted-content h3 { font-size: 1.1rem; }
+  .message .formatted-content h4 { font-size: 1.05rem; }
+
+  .message .formatted-content p {
+    margin: 0.75rem 0;
+    line-height: 1.6;
+  }
+
+  .message .formatted-content ul,
+  .message .formatted-content ol {
+    margin: 0.75rem 0;
+    padding-right: 1.5rem;
+  }
+
+  .message .formatted-content li {
+    margin: 0.5rem 0;
+    line-height: 1.5;
+  }
+
+  .message .formatted-content strong {
+    font-weight: 600;
+    color: inherit;
+  }
+
+  .message .formatted-content em {
+    font-style: italic;
+  }
+
+  .message .formatted-content blockquote {
+    margin: 1rem 0;
+    padding: 0.75rem 1rem;
+    border-right: 3px solid rgba(37, 99, 235, 0.3);
+    background: rgba(37, 99, 235, 0.05);
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+  }
+
+  .message .formatted-content code {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+  }
+
+  .message .formatted-content pre {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+
+  .message .formatted-content hr {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    margin: 1.5rem 0;
+  }
+
+  .message .formatted-content a {
+    color: #2563eb;
+    text-decoration: underline;
+  }
+
+  .message .formatted-content a:hover {
+    color: #1d4ed8;
+  }
+
+  .message.user {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    text-align: right;
+    border-bottom-right-radius: 6px;
+  }
+
+  .message.bot {
+    background: white;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    text-align: right;
+    border-bottom-left-radius: 6px;
+  }
+
+  .message.bot.error {
+    background: #fee2e2;
+    border-color: #ef4444;
+    color: #dc2626;
+  }
+
+  .message-time {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+
+  .chat-input-area {
+    display: flex;
+    padding: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    background: white;
+    gap: 1rem;
+    align-items: flex-end;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .chat-input-area textarea {
+    flex: 1;
+    padding: 1rem 1.25rem;
+    border-radius: 24px;
+    border: 2px solid #e2e8f0;
+    resize: none;
+    font-family: 'Cairo';
+    font-size: 0.95rem;
+    line-height: 1.4;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+  }
+
+  .chat-input-area textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  #send-btn {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border: none;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  }
+  
+  #send-btn:hover { 
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+  }
+
+  #send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  }
+
+  /* Typing Indicator */
+  .typing-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .typing-content {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .typing-text {
+    font-size: 0.9rem;
+    color: #475569;
+  }
+  .typing-animation span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin: 0 2px;
+    background-color: #2563eb;
+    border-radius: 50%;
+    animation: typing-animation 1.4s infinite ease-in-out;
+  }
+  .typing-animation span:nth-child(1) { animation-delay: -0.32s; }
+  .typing-animation span:nth-child(2) { animation-delay: -0.16s; }
+  .typing-animation span:nth-child(3) { animation-delay: 0s; }
+  @keyframes typing-animation {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.7; }
+    40% { transform: translateY(-4px); opacity: 1; }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Dark Theme */
+  [data-theme="dark"] .chat-header {
+    background: linear-gradient(135deg, #1e293b, #334155);
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+  }
+
+  [data-theme="dark"] .chat-box {
+    background: #0f172a;
+  }
+
+  [data-theme="dark"] .suggestion-questions {
+    background: #1e293b;
+    border-color: #475569;
+  }
+
+  [data-theme="dark"] .suggestion-questions h3 {
+    color: #f1f5f9;
+  }
+
+  [data-theme="dark"] .suggestion-item {
+    background: #334155;
+    border-color: #475569;
+    color: #cbd5e1;
+  }
+
+  [data-theme="dark"] .suggestion-item:hover {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+  }
+
+  [data-theme="dark"] .message.bot {
+    background: #1e293b;
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  [data-theme="dark"] .message.bot.error {
+    background: #7f1d1d;
+    border-color: #dc2626;
+    color: #fca5a5;
+  }
+
+  [data-theme="dark"] .message .formatted-content blockquote {
+    border-right-color: rgba(59, 130, 246, 0.4);
+    background: rgba(59, 130, 246, 0.1);
+  }
+
+  [data-theme="dark"] .message .formatted-content code {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+  }
+
+  [data-theme="dark"] .message .formatted-content pre {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e2e8f0;
+  }
+
+  [data-theme="dark"] .message .formatted-content hr {
+    border-top-color: rgba(255, 255, 255, 0.2);
+  }
+
+  [data-theme="dark"] .message .formatted-content a {
+    color: #3b82f6;
+  }
+
+  [data-theme="dark"] .message .formatted-content a:hover {
+    color: #60a5fa;
+  }
+
+  [data-theme="dark"] .chat-input-area {
+    background: #1e293b;
+    border-color: #475569;
+  }
+
+  [data-theme="dark"] .chat-input-area textarea {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  [data-theme="dark"] .chat-input-area textarea:focus {
+    background: #475569;
+    border-color: #3b82f6;
+  }
+
+  [data-theme="dark"] .typing-content {
+    background: #1e293b;
+    border-color: #475569;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .message {
+      max-width: 85%;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section id="chat-section" class="active">
+  <div class="chat-container">
+    <div class="chat-header">
+      <h2><i class="fas fa-robot"></i> <span data-ar="المساعد الذكي للسياسات" data-en="AI Policy Assistant">المساعد الذكي للسياسات</span></h2>
+      <div class="chat-controls">
+        <button class="reset-chat-btn" onclick="resetChat()">
+          <i class="fas fa-redo"></i>
+          <span data-ar="إعادة تعيين المحادثة" data-en="Reset Chat">إعادة تعيين المحادثة</span>
+        </button>
+      </div>
+    </div>
+    <div id="chat-box" class="chat-box">
+      <!-- Suggestion Questions (shown when chat is empty) -->
+      <div id="suggestion-questions" class="suggestion-questions">
+        <h3><i class="fas fa-lightbulb"></i> <span data-ar="أسئلة مقترحة" data-en="Suggested Questions">أسئلة مقترحة</span></h3>
+        <div class="suggestion-grid">
+          <div class="suggestion-item" onclick="sendSuggestion('ما هي سياسة الإجازات في الشركة؟')">
+            <i class="fas fa-calendar-alt"></i>
+            <span data-ar="ما هي سياسة الإجازات في الشركة؟" data-en="What is the company's vacation policy?">ما هي سياسة الإجازات في الشركة؟</span>
+          </div>
+          <div class="suggestion-item" onclick="sendSuggestion('كيف يمكنني طلب إجازة مرضية؟')">
+            <i class="fas fa-user-md"></i>
+            <span data-ar="كيف يمكنني طلب إجازة مرضية؟" data-en="How can I request sick leave?">كيف يمكنني طلب إجازة مرضية؟</span>
+          </div>
+          <div class="suggestion-item" onclick="sendSuggestion('ما هي ساعات العمل الرسمية؟')">
+            <i class="fas fa-clock"></i>
+            <span data-ar="ما هي ساعات العمل الرسمية؟" data-en="What are the official working hours?">ما هي ساعات العمل الرسمية؟</span>
+          </div>
+          <div class="suggestion-item" onclick="sendSuggestion('ما هي إجراءات الترقية؟')">
+            <i class="fas fa-chart-line"></i>
+            <span data-ar="ما هي إجراءات الترقية؟" data-en="What are the promotion procedures?">ما هي إجراءات الترقية؟</span>
+          </div>
+          <div class="suggestion-item" onclick="sendSuggestion('ما هي سياسة العمل من المنزل؟')">
+            <i class="fas fa-home"></i>
+            <span data-ar="ما هي سياسة العمل من المنزل؟" data-en="What is the work from home policy?">ما هي سياسة العمل من المنزل؟</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-container bot">
+        <div class="message bot">
+          <div class="formatted-content">
+            <span data-ar="👋 أهلاً وسهلاً! أنا مساعدك الذكي لسياسات الشركة. يمكنني مساعدتك في العثور على المعلومات التي تحتاجها حول السياسات والإجراءات. ما هو سؤالك؟" data-en="👋 Hello and welcome! I'm your AI assistant for company policies. I can help you find the information you need about policies and procedures. What's your question?">👋 أهلاً وسهلاً! أنا مساعدك الذكي لسياسات الشركة. يمكنني مساعدتك في العثور على المعلومات التي تحتاجها حول السياسات والإجراءات. ما هو سؤالك؟</span>
+          </div>
+          <div class="message-time" id="welcome-time"></div>
+        </div>
+      </div>
+    </div>
+    <div id="typing-indicator" class="typing-indicator" style="display:none;">
+      <div class="typing-content">
+        <span class="typing-text" data-ar="المساعد يكتب..." data-en="Assistant is typing...">المساعد يكتب...</span>
+        <span class="typing-animation">
+          <span></span><span></span><span></span>
+        </span>
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <textarea id="user-input" rows="1" data-placeholder-ar="اكتب سؤالك هنا..." data-placeholder-en="Type your question here..." placeholder="اكتب سؤالك هنا..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
+      <button id="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Global variables
+  let chatStarted = false;
+
+  // Send message function
+  async function sendMessage() {
+    if (isLoading) return;
+
+    const input = document.getElementById("user-input");
+    const chatBox = document.getElementById("chat-box");
+    const typingIndicator = document.getElementById("typing-indicator");
+    const sendBtn = document.getElementById("send-btn");
+    const userMsg = input.value.trim();
+
+    if (!userMsg) return;
+    if (!sessionId) {
+      await generateSessionId();
+    }
+
+    // Hide suggestion questions after first message
+    if (!chatStarted) {
+      document.getElementById('suggestion-questions').style.display = 'none';
+      chatStarted = true;
+    }
+
+    // Disable input and show loading state
+    isLoading = true;
+    input.disabled = true;
+    sendBtn.disabled = true;
+
+    // Add user message with timestamp
+    const userMsgElem = document.createElement("div");
+    userMsgElem.className = "message-container user";
+    const currentTime = new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+    userMsgElem.innerHTML = `
+      <div class='message user'>${escapeHtml(userMsg)}</div>
+      <div class="message-time">${currentTime}</div>
+    `;
+    chatBox.appendChild(userMsgElem);
+
+    input.value = "";
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Show typing indicator
+    typingIndicator.style.display = "flex";
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try {
+      // Send message to Flask backend
+      const response = await fetch('/send_message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: userMsg,
+          sessionId: sessionId
+        })
+      });
+
+      const data = await response.json();
+
+      // Hide typing indicator
+      typingIndicator.style.display = "none";
+
+      // Add bot response with timestamp
+      const botMsgElem = document.createElement("div");
+      botMsgElem.className = "message-container bot";
+      const messageClass = data.error ? "message bot error" : "message bot";
+      const botTime = new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+      
+      // Format the bot response if it's not an error
+      const formattedReply = data.error ? escapeHtml(data.reply) : formatText(data.reply);
+      
+      botMsgElem.innerHTML = `
+        <div class='${messageClass}'>
+          <div class="formatted-content">${formattedReply}</div>
+        </div>
+        <div class="message-time">${botTime}</div>
+      `;
+      chatBox.appendChild(botMsgElem);
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+    } catch (error) {
+      console.error('Error sending message:', error);
+
+      // Hide typing indicator
+      typingIndicator.style.display = "none";
+
+      // Show error message
+      const errorMsgElem = document.createElement("div");
+      errorMsgElem.className = "message-container bot";
+      const currentLang = document.documentElement.getAttribute('data-lang') || 'ar';
+      const errorText = currentLang === 'ar' ?
+        "⚠️ حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى." :
+        "⚠️ Connection error occurred. Please try again.";
+      const errorTime = new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+      errorMsgElem.innerHTML = `
+        <div class='message bot error'>${errorText}</div>
+        <div class="message-time">${errorTime}</div>
+      `;
+      chatBox.appendChild(errorMsgElem);
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    } finally {
+      // Re-enable input
+      isLoading = false;
+      input.disabled = false;
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  // Utility function to escape HTML
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Simple markdown-like formatter for LLM output
+  function formatText(text) {
+    if (!text) return '';
+    
+    let formatted = text;
+    
+    // Convert **bold** to <strong>bold</strong>
+    formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // Convert *italic* to <em>italic</em>
+    formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    // Convert bullet points (- or •) to proper list items
+    formatted = formatted.replace(/^[\s]*[-•]\s+(.+)$/gm, '<li>$1</li>');
+    
+    // Wrap consecutive list items in <ul>
+    formatted = formatted.replace(/(<li>.*<\/li>(\s*<li>.*<\/li>)*)/gs, '<ul>$1</ul>');
+    
+    // Convert numbered lists (1. 2. etc.)
+    formatted = formatted.replace(/^[\s]*\d+\.\s+(.+)$/gm, '<li>$1</li>');
+    formatted = formatted.replace(/(<li>.*<\/li>(\s*<li>.*<\/li>)*)/gs, '<ol>$1</ol>');
+    
+    // Convert > quotes to blockquotes
+    formatted = formatted.replace(/^>\s*(.+)$/gm, '<blockquote>$1</blockquote>');
+    
+    // Convert line breaks to <br> for better spacing
+    formatted = formatted.replace(/\n\n/g, '</p><p>');
+    formatted = formatted.replace(/\n/g, '<br>');
+    
+    // Wrap in paragraph tags if not already wrapped
+    if (!formatted.includes('<p>') && !formatted.includes('<ul>') && !formatted.includes('<ol>')) {
+      formatted = '<p>' + formatted + '</p>';
+    }
+    
+    return formatted;
+  }
+
+  // Send suggestion question
+  function sendSuggestion(question) {
+    const input = document.getElementById("user-input");
+    input.value = question;
+    sendMessage();
+  }
+
+  // Reset chat function
+  function resetChat() {
+    const currentLang = document.documentElement.getAttribute('data-lang') || 'ar';
+    const confirmText = currentLang === 'ar' ? 
+      "هل أنت متأكد من إعادة تعيين المحادثة؟" : 
+      "Are you sure you want to reset the chat?";
+    
+    if (confirm(confirmText)) {
+      // Simply refresh the page for a clean start
+      window.location.reload();
+    }
+  }
+
+  // Auto-resize textarea
+  document.getElementById('user-input').addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+  });
+
+  // Focus input when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      document.getElementById('user-input').focus();
+      // Set welcome message time
+      const welcomeTime = new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('welcome-time').textContent = welcomeTime;
+    }, 100);
+  });
+</script>
+{% endblock %}

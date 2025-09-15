@@ -1,0 +1,435 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+  /* Hero Section */
+  .hero-section {
+    text-align: center;
+    padding: 3rem 2rem;
+    margin-bottom: 4rem;
+  }
+
+  .welcome-section h1 {
+    font-size: 3rem;
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+  }
+
+  .hero-subtitle {
+    font-size: 1.3rem;
+    color: #64748b;
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  .start-chat-btn {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 1.2rem 2.5rem;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .start-chat-btn:hover { 
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    color: white;
+    text-decoration: none;
+  }
+
+  /* Features Section */
+  .features-section {
+    margin-bottom: 4rem;
+    padding: 0 2rem;
+  }
+
+  .features-title {
+    text-align: center;
+    font-size: 2.2rem;
+    color: #1e293b;
+    margin-bottom: 3rem;
+    font-weight: 600;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+
+  .feature-card {
+    padding: 1.5rem 0;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .feature-card:hover { 
+    transform: translateY(-5px);
+  }
+
+  .feature-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+  }
+
+  .feature-icon i {
+    font-size: 2rem;
+    color: white;
+  }
+
+  .feature-card h3 {
+    font-size: 1.3rem;
+    color: #1e293b;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .feature-card p {
+    color: #64748b;
+    line-height: 1.6;
+    font-size: 1rem;
+  }
+
+  /* How It Works Section */
+  .how-it-works {
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .how-it-works-title {
+    text-align: center;
+    font-size: 2.2rem;
+    color: #1e293b;
+    margin-bottom: 3rem;
+    font-weight: 600;
+  }
+
+  .steps-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .step-number {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .step-content h3 {
+    font-size: 1.2rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .step-content p {
+    color: #64748b;
+    line-height: 1.5;
+  }
+
+  /* Dark Theme */
+  [data-theme="dark"] .welcome-section h1 {
+    color: #f1f5f9;
+  }
+
+  [data-theme="dark"] .hero-subtitle {
+    color: #cbd5e1;
+  }
+
+  [data-theme="dark"] .features-title,
+  [data-theme="dark"] .how-it-works-title {
+    color: #f1f5f9;
+  }
+
+  [data-theme="dark"] .feature-card {
+    color: #f1f5f9;
+  }
+
+  [data-theme="dark"] .feature-card h3 {
+    color: #f1f5f9;
+  }
+
+  [data-theme="dark"] .feature-card p {
+    color: #cbd5e1;
+  }
+
+  [data-theme="dark"] .step-content h3 {
+    color: #f1f5f9;
+  }
+
+  [data-theme="dark"] .step-content p {
+    color: #cbd5e1;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .welcome-section h1 {
+      font-size: 2.2rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .steps-container {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .step {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+    }
+
+    .how-it-works {
+      padding: 1.5rem;
+    }
+
+    .hero-section {
+      padding: 2rem 1rem;
+    }
+
+    .features-section {
+      padding: 0 1rem;
+    }
+  }
+
+  /* Footer Styles */
+  .app-footer {
+    width: 100%;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    color: #1e293b;
+    margin-top: 4rem;
+    padding: 2rem 0 1rem;
+    border-top: 3px solid #2563eb;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .footer-content {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .footer-section h4 {
+    color: #2563eb;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .footer-section p {
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-section ul li {
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-section ul li a {
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .footer-section ul li a:hover {
+    color: #2563eb;
+  }
+
+  .footer-bottom {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .footer-bottom p {
+    color: #94a3b8;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  /* Dark theme footer adjustments */
+  [data-theme="dark"] .app-footer {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #f1f5f9;
+    border-top-color: #3b82f6;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  [data-theme="dark"] .footer-section h4 {
+    color: #3b82f6;
+  }
+
+  [data-theme="dark"] .footer-section p {
+    color: #cbd5e1;
+  }
+
+  [data-theme="dark"] .footer-section ul li a {
+    color: #cbd5e1;
+  }
+
+  [data-theme="dark"] .footer-section ul li a:hover {
+    color: #3b82f6;
+  }
+
+  [data-theme="dark"] .footer-bottom {
+    border-top-color: #475569;
+  }
+
+  [data-theme="dark"] .footer-bottom p {
+    color: #94a3b8;
+  }
+
+  /* Responsive footer */
+  @media (max-width: 768px) {
+    .footer-content {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      padding: 0 1rem;
+    }
+
+    .app-footer {
+      margin-top: 2rem;
+      padding: 1.5rem 0 1rem;
+    }
+
+    .footer-bottom {
+      padding: 0 1rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="welcome-section active">
+  <div class="hero-section">
+    <h1 data-ar="مرحباً بك في المساعد الذكي" data-en="Welcome to AI Assistant ">مرحباً بك في المساعد الذكي </h1>
+    <p class="hero-subtitle" data-ar="مساعدك الذكي لفهم سياسات الشركة والإجابة على استفساراتك بسهولة وسرعة" data-en="Your intelligent assistant for understanding company policies and answering your questions easily and quickly">
+      مساعدك الذكي لفهم سياسات الشركة والإجابة على استفساراتك بسهولة وسرعة
+    </p>
+    <a href="{{ url_for('chat') }}" class="start-chat-btn">
+      <i class="fas fa-comments"></i> <span data-ar="ابدأ المحادثة الآن" data-en="Start Chat Now">ابدأ المحادثة الآن</span>
+    </a>
+  </div>
+
+  <div class="features-section">
+    <h2 class="features-title" data-ar="لماذا تختار مساعدنا الذكي؟" data-en="Why Choose Our AI Assistant?">لماذا تختار مساعدنا الذكي؟</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <h3 data-ar="بحث ذكي" data-en="Smart Search">بحث ذكي</h3>
+        <p data-ar="ابحث في جميع سياسات الشركة بسرعة ودقة" data-en="Search all company policies quickly and accurately">ابحث في جميع سياسات الشركة بسرعة ودقة</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <h3 data-ar="متاح 24/7" data-en="Available 24/7">متاح 24/7</h3>
+        <p data-ar="احصل على إجابات فورية في أي وقت" data-en="Get instant answers anytime">احصل على إجابات فورية في أي وقت</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3 data-ar="معلومات موثوقة" data-en="Reliable Information">معلومات موثوقة</h3>
+        <p data-ar="إجابات دقيقة مبنية على السياسات الرسمية" data-en="Accurate answers based on official policies">إجابات دقيقة مبنية على السياسات الرسمية</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-globe"></i>
+        </div>
+        <h3 data-ar="متعدد اللغات" data-en="Multi-Language">متعدد اللغات</h3>
+        <p data-ar="دعم كامل للعربية والإنجليزية" data-en="Full support for Arabic and English">دعم كامل للعربية والإنجليزية</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4 data-ar="المساعد الذكي" data-en="AI Assistant">المساعد الذكي</h4>
+        <p data-ar="مساعدك الذكي لفهم سياسات الشركة والإجابة على استفساراتك" data-en="Your intelligent assistant for understanding company policies and answering your questions">
+          مساعدك الذكي لفهم سياسات الشركة والإجابة على استفساراتك
+        </p>
+      </div>
+      <div class="footer-section">
+        <h4 data-ar="روابط سريعة" data-en="Quick Links">روابط سريعة</h4>
+        <ul>
+          <li><a href="{{ url_for('home') }}" data-ar="الصفحة الرئيسية" data-en="Home">الصفحة الرئيسية</a></li>
+          <li><a href="{{ url_for('chat') }}" data-ar="المحادثة" data-en="Chat">المحادثة</a></li>
+          <li><a href="{{ url_for('settings') }}" data-ar="الإعدادات" data-en="Settings">الإعدادات</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4 data-ar="معلومات" data-en="Information">معلومات</h4>
+        <ul>
+          <li data-ar="الإصدار: 1.0.0" data-en="Version: 1.0.0">الإصدار: 1.0.0</li>
+          <li data-ar="© 2025 جميع الحقوق محفوظة" data-en="© 2025 All Rights Reserved">© 2025 جميع الحقوق محفوظة</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p data-ar="صُنع بـ ❤️ للموظفين" data-en="Made with ❤️ for employees">صُنع بـ ❤️ للموظفين</p>
+    </div>
+  </footer>
+</section>
+{% endblock %}
